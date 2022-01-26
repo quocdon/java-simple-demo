@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public abstract class Document {
@@ -44,12 +45,31 @@ public abstract class Document {
         System.out.println("Issue number: " + issueNumber);
     }
 
-    public void inputData(Scanner scanner) {
-        System.out.println("ID: ");
-        setId(scanner.next());
+    public void inputData(Scanner scanner, List<Document> documents) {
+        String id = null;
+        do {
+            System.out.println("ID: ");
+            id = scanner.nextLine();
+        } while (checkIdExist(id, documents));
+        setId(id);
         System.out.println("Publisher name: ");
-        setPublisherName(scanner.next());
+        setPublisherName(scanner.nextLine());
         System.out.println("Issue number: ");
-        setIssueNumber(scanner.next());
+        setIssueNumber(scanner.nextLine());
+    }
+
+    public boolean checkIdExist(String id, List<Document> documents){
+        if (id.equals("")) {
+            return true;
+        }
+        if (!documents.isEmpty()) {
+            for (Document document: documents) {
+                if (document.getId().equals(id)) {
+                    System.out.println("Document id exists!");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Book extends Document {
@@ -37,10 +38,10 @@ public class Book extends Document {
     }
 
     @Override
-    public void inputData(Scanner scanner) {
-        super.inputData(scanner);
+    public void inputData(Scanner scanner, List<Document> documents) {
+        super.inputData(scanner, documents);
         System.out.println("Author name: ");
-        setAuthorName(scanner.next());
+        setAuthorName(scanner.nextLine());
         System.out.println("Page number: ");
         setPageNumber(scanner.nextInt());
     }

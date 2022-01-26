@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Journal extends Document {
@@ -26,9 +27,9 @@ public class Journal extends Document {
     }
 
     @Override
-    public void inputData(Scanner scanner) {
-        super.inputData(scanner);
+    public void inputData(Scanner scanner, List<Document> documents) {
+        super.inputData(scanner, documents);
         System.out.println("Issue month: ");
-        setIssueMonth(scanner.next());
+        setIssueMonth(scanner.nextLine());
     }
 }
