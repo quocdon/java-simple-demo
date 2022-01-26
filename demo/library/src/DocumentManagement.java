@@ -15,7 +15,8 @@ public class DocumentManagement {
                 "1. Add new document\n" +
                 "2. Delete document\n" +
                 "3. Show document list\n" +
-                "4. Exit\n" +
+                "4. Search by type\n" +
+                "5. Exit\n" +
                 "Please choose: ");
         String selectedNumber = scanner.next();
         switch (selectedNumber) {
@@ -31,7 +32,11 @@ public class DocumentManagement {
                 showDocument();
                 break;
             }
-            case "4":
+            case "4": {
+                searchByType();
+                break;
+            }
+            case "5":
                 scanner.close();
                 System.exit(0);
             default: mainMenu();
@@ -103,5 +108,49 @@ public class DocumentManagement {
             }
         }
         mainMenu();
+    }
+
+    public static void searchByType(){
+        System.out.println("-----SEARCH BY TYPE-----\n" +
+                "1. Search all books\n" +
+                "2. Search all journals\n" +
+                "3. Search all newspapers\n" +
+                "4. Back to main menu\n" +
+                "Please choose: ");
+        String selectedNumber = scanner.nextLine();
+        switch (selectedNumber) {
+            case "1": {
+                for (Document document: documents) {
+                    if (document instanceof Book) {
+                        document.showData();
+                        System.out.println("----------");
+                    }
+                }
+                searchByType();
+                break;
+            }
+            case "2": {
+                for (Document document: documents) {
+                    if (document instanceof Journal) {
+                        document.showData();
+                        System.out.println("----------");
+                    }
+                }
+                searchByType();
+                break;
+            }
+            case "3": {
+                for (Document document: documents) {
+                    if (document instanceof Newspaper) {
+                        document.showData();
+                        System.out.println("----------");
+                    }
+                }
+                searchByType();
+                break;
+            }
+            case "4": mainMenu();
+            default: searchByType();
+        }
     }
 }
