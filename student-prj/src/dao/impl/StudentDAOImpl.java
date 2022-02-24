@@ -86,11 +86,6 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
-    public Student getById(int id) {
-        return null;
-    }
-
-    @Override
     public List<Student> getByName(String searchName) throws SQLException {
         List<Student> studentList = new ArrayList<>();
         try {

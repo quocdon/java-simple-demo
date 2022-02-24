@@ -30,4 +30,14 @@ public class DataUtils {
         String regex = "^[\\d]{10}$";
         return str.matches(regex);
     }
+
+    public static boolean isScore(String str) {
+        double score = 0;
+        try {
+            score = Double.parseDouble(str);
+            return !(score < 0) && !(score > 10);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

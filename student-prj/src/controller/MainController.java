@@ -25,6 +25,7 @@ public class MainController {
             mainMenu();
         } catch (Exception e) {
             System.out.println("There is unexpected error occurs");
+            System.out.println(e.getMessage());
             main(args);
         }
 

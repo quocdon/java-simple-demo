@@ -6,6 +6,7 @@ import dao.SubjectDAO;
 import model.Score;
 import model.Student;
 import model.Subject;
+import util.DBUtils;
 import util.DataUtils;
 
 import java.sql.SQLException;
@@ -22,12 +23,18 @@ public class StudentController {
         do {
             System.out.println("Enter birthday: ");
             birthdayString = scanner.nextLine();
+            if (!DataUtils.isDate(birthdayString)) {
+                System.out.println("Invalid birthday (dd/MM/yyyy). Please try again");
+            }
         } while (!DataUtils.isDate(birthdayString));
         student.setBirthday(DataUtils.convertDate(birthdayString));
         String phone = null;
         do {
             System.out.println("Enter phone: ");
             phone = scanner.nextLine();
+            if (!DataUtils.isPhoneNumber(phone)) {
+                System.out.println("Invalid phone number (10 digits). Please try again");
+            }
         } while (!DataUtils.isPhoneNumber(phone));
         student.setPhone(phone);
         studentDAO.add(student);
@@ -60,8 +67,15 @@ public class StudentController {
                 List<Score> scoreList = new ArrayList<>();
                 System.out.println("Student: " + selectedStudent.getName() + ". Enter Scores: ");
                 for (Subject subject: subjectList) {
-                    System.out.println(subject.getName() + ": ");
-                    scoreList.add(new Score(selectedStudent, subject, scanner.nextDouble()));
+                    String score = null;
+                    do {
+                        System.out.println(subject.getName() + ": ");
+                        score = scanner.nextLine();
+                        if (!DataUtils.isScore(score)) {
+                            System.out.println("Invalid score (0 -> 10). Please try again");
+                        }
+                    } while (!DataUtils.isScore(score));
+                    scoreList.add(new Score(selectedStudent, subject, Double.parseDouble(score)));
                 }
                 scoreDAO.addScoreList(scoreList);
                 System.out.println("Add score for student " + selectedStudent.getName() + " successfully");

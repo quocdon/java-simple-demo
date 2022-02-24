@@ -7,10 +7,19 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../Fsoft/FA/Training/_02_Java/Libs/sqljdbc_9.4/enu/mssql-jdbc-9.4.0.jre8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../Fsoft/FA/Training/_02_Java/Libs/sqljdbc_9.4/enu/mssql-jdbc-9.4.0.jre8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
