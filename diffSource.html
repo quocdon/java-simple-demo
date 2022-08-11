@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DiffSource Generation Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <h3 class="text-center mb-5">DIFF-SOURCE GENERATE TOOL</h3>
+    <table class="table mx-auto">
+        <tr class="col-12">
+            <td class="col-3"><label class="form-label">Before source path:</label></td>
+            <td class="col-8"><input class="w-100 form-control" type="text" id="beforePath" onchange="checkSourcePath()"/></td>
+            <td class="col-1"></td>
+        </tr>
+        <tr class="col-12">
+            <td class="col-3">After source path:</td>
+            <td class="col-8"><input class="w-100 form-control" type="text" id="afterPath" onchange="checkSourcePath()"/></td>
+            <td class="col-1"></td>
+        </tr>
+        <tr>
+            <td>Diff-source path:</td>
+            <td><input class="w-100 form-control" type="text" id="destinationPath" onchange="checkSourcePath()"/></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>After file path:</td>
+            <td><input class="w-100 form-control" type="text" id="filePath"/></td>
+            <td>
+                <button class="btn btn-success" type="submit" id="add" onclick="addFile()" disabled>Add</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" align="center">
+                <button class="btn btn-warning mx-auto" id="generate" onclick="generate()" disabled>Generate Diff
+                    Source
+                </button>
+            </td>
+        </tr>
+    </table>
+    <div class="w-100" id="fileList">
+
+    </div>
+</div>
+<script>
+    let beforePath = "";
+    let afterPath = "";
+    let destinationPath = "";
+    let fileList = [];
+
+    function checkSourcePath() {
+        // Get paths
+        beforePath = document.getElementById("beforePath").value;
+        afterPath = document.getElementById("afterPath").value;
+        destinationPath = document.getElementById("destinationPath").value;
+        // Enable button Add if all paths are filled
+        // I will add function to check all paths correctly when I have time
+        if (beforePath !== "" && afterPath !== "" && destinationPath !== "") {
+            document.getElementById("add").removeAttribute("disabled");
+            if (fileList.length) {
+                document.getElementById("generate").removeAttribute("disabled")
+            } else {
+                document.getElementById("generate").setAttribute("disabled", "");
+            }
+        } else {
+            document.getElementById("add").setAttribute("disabled", "");
+            document.getElementById("generate").setAttribute("disabled", "");
+        }
+    }
+
+    function addFile() {
+        let filePath = document.getElementById("filePath").value;
+        if (checkFilePath(filePath)) {
+            fileList.push(filePath);
+            writeFileList(fileList);
+        }
+        checkSourcePath();
+        document.getElementById("filePath").setAttribute("value", "");
+    }
+
+    function removeFile(i) {
+        fileList.splice(i, 1);
+        writeFileList(fileList);
+        checkSourcePath();
+    }
+
+    function writeFileList(list) {
+        let writeFilePath = "<p class='text-danger'>Total files: " + list.length + " file(s)</p><br>"
+            + "<table class='table table-bordered col-10 mx-auto'>";
+        if (list) {
+            list.forEach((p, index) => {
+                writeFilePath += "<tr>" +
+                    "<td class='col-1' align='center'>" + (index + 1) + "</td>" +
+                    "<td class='col-7'>" + p + "</td>" +
+                    "<td class='col-2' align='center'>" +
+                    "<button class='btn btn-danger' onclick='removeFile(" + index + ")'>Remove</button>" +
+                    "</td></tr>"
+            })
+        }
+        writeFilePath += "</table>";
+        document.getElementById("fileList").innerHTML = writeFilePath;
+    }
+
+    function checkFilePath(filePath) {
+        if (!filePath.startsWith(afterPath)) {
+            alert("Incorrect file path");
+            return false;
+        }
+        if (fileList.indexOf(filePath) >= 0) {
+            alert("File already exist");
+            return false;
+        }
+        if (filePath.indexOf(".") < 0 || filePath.indexOf(".") !== filePath.lastIndexOf(".")){
+            alert("Invalid file path");
+            return false;
+        }
+        return true;
+    }
+
+    function generate() {
+        let before = destinationPath + "\\before"
+        let after = destinationPath + "\\after"
+        let text = "echo OFF \r\n";
+        text += "chcp 65001";
+        text += "call md " + before + " \r\n" +
+            "call md " + after + " \r\n";
+        fileList.forEach(file => {
+            text += "call md \"" + before + makeDirectory(file) + "\"\r\n"
+                + "call md \"" + after + makeDirectory(file) + "\"\r\n"
+                + "call copy \"" + beforePath + getFileName(file) + "\" \"" + before + makeDirectory(file) + "\"\r\n"
+                + "call copy \"" + file + "\" \"" + after + makeDirectory(file) + "\"\r\n"
+
+        })
+        text += "pause"
+        let fileName = "diffSource.bat"
+        let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+        let blob = new Blob([bom, text], {type: "text/plain"});
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+
+    function makeDirectory(path) {
+        if (path.indexOf("\\") > 0) {
+            return path.substring(afterPath.length, path.lastIndexOf("\\") + 1);
+        }
+    }
+
+    function getFileName(path) {
+        if (path.indexOf("\\") > 0) {
+            return path.substring(afterPath.length);
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+</body>
+</html>
